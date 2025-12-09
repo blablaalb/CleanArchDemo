@@ -1,29 +1,45 @@
-﻿using System;
+﻿using CleanArch.Mvc.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using CleanArch.Mvc.Models;
 
-namespace CleanArch.Mvc.Controllers
+namespace CleanArch.Mvc.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly IWebHostEnvironment _env;
+
+    public HomeController(IWebHostEnvironment env)
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        _env = env;
+    }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+    public IActionResult Index()
+    {
+        return View("./Views/Home/Index.cshtml");
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    // Temporary diagnostic endpoint: /Home/ProbeView
+    public IActionResult ProbeView()
+    {
+        var path = Path.Combine(_env.ContentRootPath, "Views", "Home", "Index.cshtml");
+        var exists = System.IO.File.Exists(path);
+        return Content($"ContentRoot: {_env.ContentRootPath}\nViews/Home/Index.cshtml exists: {exists}\nPath: {path}");
     }
 }
